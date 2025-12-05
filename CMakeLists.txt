@@ -11,6 +11,9 @@ set(CMAKE_CXX_STANDARD 17)
 set(CMAKE_CXX_STANDARD_REQUIRED YES)
 set(CMAKE_CXX_EXTENSIONS NO)
 
+set(CMAKE_C_FLAGS "${CMAKE_C_FLAGS} -Wno-error=documentation")
+set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-error=documentation")
+
 option(UCALL_BUILD_BENCHMARKS "Builds all available backend for the summation server to run benchmarks" OFF)
 option(UCALL_BUILD_EXAMPLES "Builds examples for Redis-like server and PyTorch deployment")
 message("CMAKE_SYSTEM_NAME: ${CMAKE_SYSTEM_NAME}")
