@@ -13,15 +13,15 @@ memory_map_t& memory_map_t::operator=(memory_map_t&& other) noexcept {
     return *this;
 }
 
-bool memory_map_t::reserve(std::size_t len, int flags) noexcept {
-    auto new_ptr = (char*)mmap(ptr, len, PROT_WRITE | PROT_READ, flags, -1, 0);
+bool memory_map_t::reserve(std::size_t length, int flags) noexcept {
+    auto new_ptr = reinterpret_cast<char*>(mmap(ptr, length, PROT_WRITE | PROT_READ, flags, -1, 0));
     if (new_ptr == MAP_FAILED) {
         errno;
         return false;
     }
-    std::memset(new_ptr, 0, len);
+    std::memset(new_ptr, 0, length);
     ptr = new_ptr;
-    length = len;
+    this->length = length;
     return true;
 }
 
