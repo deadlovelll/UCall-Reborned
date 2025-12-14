@@ -167,12 +167,23 @@ void automata_t::send_next() noexcept {
     engine.submission_mutex.lock();
     uring_sqe = io_uring_get_sqe(&engine.uring);
     if (engine.has_send_zc) {
-        io_uring_prep_send_zc_fixed(uring_sqe, int(connection.descriptor), (void*)pipes.next_output_address(),
-                                    pipes.next_output_length(), 0, 0,
-                                    engine.connections.offset_of(connection) * 2u + 1u);
+        io_uring_prep_send_zc_fixed(
+            uring_sqe, 
+            int(connection.descriptor), 
+            reinterpret_cast<void*>(pipes.next_output_address()),
+            pipes.next_output_length(), 
+            0, 
+            0,
+            engine.connections.offset_of(connection) * 2u + 1u
+        );
     } else {
-        io_uring_prep_send(uring_sqe, int(connection.descriptor), (void*)pipes.next_output_address(),
-                           pipes.next_output_length(), 0);
+        io_uring_prep_send(
+            uring_sqe, 
+            int(connection.descriptor), 
+            reinterpret_cast<void*>(pipes.next_output_address()),
+            pipes.next_output_length(), 
+            0
+        );
         uring_sqe->flags |= IOSQE_FIXED_FILE;
         uring_sqe->buf_index = engine.connections.offset_of(connection) * 2u + 1u;
     }
@@ -200,8 +211,14 @@ void automata_t::receive_next() noexcept {
     //
     // In this case we are waiting for an actual data, not some artificial wakeup.
     uring_sqe = io_uring_get_sqe(&engine.uring);
-    io_uring_prep_read_fixed(uring_sqe, int(connection.descriptor), (void*)pipes.next_input_address(),
-                             pipes.next_input_length(), 0, engine.connections.offset_of(connection) * 2u);
+    io_uring_prep_read_fixed(
+        uring_sqe, 
+        int(connection.descriptor), 
+        reinterpret_cast<void*>(pipes.next_input_address()),
+        pipes.next_input_length(), 
+        0, 
+        engine.connections.offset_of(connection) * 2u
+    );
     io_uring_sqe_set_data(uring_sqe, &connection);
     io_uring_sqe_set_flags(uring_sqe, IOSQE_IO_LINK);
 
